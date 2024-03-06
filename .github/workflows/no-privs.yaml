@@ -4,8 +4,22 @@ on:
   workflow_dispatch:
   push:
 jobs:
-  tests:
+  no-privs:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          flakehub: true
+      - uses: DeterminateSystems/magic-nix-cache-action@flakehub
+      - run: |
+            nix build "https://flakehub.com/f/DeterminateSystems/fh/0.1.9.tar.gz"
+
+  all-privs:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: "write"
+      contents: "read"
     steps:
       - uses: actions/checkout@v4.1.1
       - uses: DeterminateSystems/nix-installer-action@main
